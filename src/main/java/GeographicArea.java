@@ -1,7 +1,11 @@
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 //import java.security.MessageDigest;
 import javax.json.Json;
-import javax.json.JsonObjectBuilder;
+import javax.json.JsonObject;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
@@ -19,19 +23,29 @@ public class GeographicArea  {
     private String arabicName;
 
     private Double pop2000;
+    private GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);;
+    private WKTReader reader = new WKTReader(gf);
     private Geometry WKTgeom = null;
 
     // TODO: make this GeoJSON?
     public String JSONString(){
-        JsonObjectBuilder value = Json.createObjectBuilder()
-                .add("english", englishName)
-                .add("spanish", spanishName)
-                .add("french", frenchName)
-                .add("russian", russianName)
-                .add("chinese", chineseName)
-                .add("arabic", arabicName)
+        String engVal = (englishName != null) ? englishName : "";
+        String spaVal = (spanishName != null) ? spanishName : "";
+        String freVal = (frenchName!= null) ? frenchName : "";
+        String rusVal = (russianName != null) ? russianName : "";
+        String chiVal = (chineseName != null) ? chineseName : "";
+        String araVal = (arabicName != null) ? arabicName : "";
+
+        JsonObject value = Json.createObjectBuilder()
+                .add("english", engVal)
+                .add("spanish", spaVal)
+                .add("french", freVal)
+                .add("russian", rusVal)
+                .add("chinese", chiVal)
+                .add("arabic", araVal)
                 .add("population", pop2000)
-                .add("wkt", WKTgeom.toString());
+                .add("wkt", WKTgeom.toString())
+                .build();
 
 
         return value.toString();
@@ -84,38 +98,46 @@ public class GeographicArea  {
     }
 
     public GeographicArea EnglishName(String name) throws UnsupportedEncodingException {
-        this.englishName = new String(name.getBytes("UTF-8"));
+        this.englishName = Helpers.UTF8Normalize(name);
         return this;
     }
 
     public GeographicArea SpanishName(String name) throws UnsupportedEncodingException {
-        this.spanishName = new String(name.getBytes("UTF-8"));
+        this.spanishName = Helpers.UTF8Normalize(name);
         return this;
     }
 
     public GeographicArea FrenchName(String name) throws UnsupportedEncodingException {
-        this.frenchName = new String(name.getBytes("UTF-8"));
+        this.frenchName = Helpers.UTF8Normalize(name);
         return this;
     }
 
     public GeographicArea RussianhName(String name) throws UnsupportedEncodingException {
-        this.russianName = new String(name.getBytes("UTF-8"));
+        this.russianName = Helpers.UTF8Normalize(name);
         return this;
     }
 
     public GeographicArea ChineseName(String name) throws UnsupportedEncodingException {
-        this.chineseName = new String(name.getBytes("UTF-8"));
+        this.chineseName = Helpers.UTF8Normalize(name);
         return this;
     }
 
     public GeographicArea ArabicName(String name) throws UnsupportedEncodingException {
-        this.arabicName = new String(name.getBytes("UTF-8"));
+        this.arabicName = Helpers.UTF8Normalize(name);
         return this;
     }
 
     public GeographicArea Geom(Geometry geom) throws NoSuchAlgorithmException {
-//        MessageDigest md = MessageDigest.getInstance("SHA");
-        this.WKTgeom = geom;
+        // MessageDigest md = MessageDigest.getInstance("SHA");
+
+        // geom is currently wkb, we'll convert it to wkt
+        try {
+            Geometry geomAsWKT = reader.read(geom.toString());
+            this.WKTgeom = geomAsWKT;
+        }
+        catch(ParseException pe){
+            pe.printStackTrace();
+        }
         return this;
     }
     

@@ -5,20 +5,27 @@ import java.util.TreeSet;
 
 public class NameSearcher {
 
-    private HashMap<String,  TreeSet<GeographicArea>> nameToGeo;
+    private HashMap<String,  TreeSet<String>> nameToGeoID;
 
     public NameSearcher(){
-        nameToGeo = new HashMap<String, TreeSet<GeographicArea>>();
+        nameToGeoID = new HashMap<String, TreeSet<String>>();
     }
 
     public Boolean AddNameIDPair(String n, String id)  {
         Boolean success = true;
 
-        String name = UTF8Normalize(n);
+        String name = Helpers.UTF8Normalize(n);
         if(name != null) {
-            TreeSet update = nameToGeo.get(name);
-            update.add(id);
-            nameToGeo.put(name, update);
+            if(nameToGeoID.containsKey(name)) {
+                TreeSet<String> update = nameToGeoID.get(name);
+                update.add(id);
+                nameToGeoID.put(name, update);
+            }
+            else{
+                TreeSet<String> firstEntry = new TreeSet<String>();
+                firstEntry.add(id);
+                nameToGeoID.put(name, firstEntry);
+            }
         }
         else{
             success = false;
@@ -26,23 +33,12 @@ public class NameSearcher {
         return success;
     }
 
-    public TreeSet<GeographicArea> getIDsForName(String n){
-        String name = UTF8Normalize(n);
+    public TreeSet<String> NameQuery(String n){
+        String name = Helpers.UTF8Normalize(n);
         if(name != null){
-           return nameToGeo.get(name);
+           return nameToGeoID.get(name);
         }
         return null;
     }
 
-    private String UTF8Normalize(String in){
-        String out;
-        try {
-            out = new String(in.getBytes("UTF-8"));
-        }
-        catch(UnsupportedEncodingException e){
-            out = null;
-        }
-        return out;
-
-    }
 }

@@ -30,6 +30,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4-1201-jdbc41'
     // https://mvnrepository.com/artifact/javax.json/javax.json-api
-    compile group: 'javax.json', name: 'javax.json-api', version: '1.0'
+    //compile group: 'javax.json', name: 'javax.json-api', version: '1.0'
+    compile "org.glassfish:javax.json:1.0.4"
 
 }
