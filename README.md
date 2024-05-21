@@ -1,7 +1,7 @@
 Geo Search
 =============
 
-This is a basic JAVA search model for Geographic areas. It tries yo do something useful with some standard technologies, PostGres, POSTGIS and the Java Topological suite. The data I'm currently using is gadm v2.8.
+This is a basic JAVA search model for Geographic areas. It tries to do something useful with some standard technologies, PostGres, POSTGIS and the Java Topological suite. The data I'm currently using is gadm v2.8.
 
 I exposed two ways lookup information, one by name and the other by lat/lon.  Since we're using gadm, we typically have names for each place in 7 languages, Arabic, Chinese, English, French, Spanish and Russian.  The name search can use any of the 7 orthographies to return the same result.  The lat/lon lookup takes a point on the globe and returns information about all the geographic areas that contain the point in question.
 
